@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Weatheronroute2</string>
-    <string name="mapbox_access_token">sk.eyJ1IjoiYWthc2gxOTExIiwiYSI6ImNrZHQ2Y292azFmZXkydG9kdHB6N2hpYTMifQ.QDLtOZN4Gt1KULCWVUXhaw</string>
+    <string name="mapbox_access_token">addkeyhere</string>
     <string name="user_location_permission_explanation">EXPLANATION_HERE</string>
     <string name="user_location_permission_not_granted">Not granted</string>
     <string name="new_location">New lat: %1$s New longitude: %2$s</string>
