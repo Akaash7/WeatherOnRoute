@@ -30,7 +30,7 @@ allprojects {
             credentials {
                 username = "mapbox"
                 // Use the secret token you stored in gradle.properties as the password
-                password = project.properties['sk.eyJ1IjoiYWthc2gxOTExIiwiYSI6ImNrZHQ2Y292azFmZXkydG9kdHB6N2hpYTMifQ.QDLtOZN4Gt1KULCWVUXhaw'] ?: ""
+                password = project.properties['ADDKEYHERE'] ?: ""
             }
         }
     }
