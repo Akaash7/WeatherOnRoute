@@ -18,6 +18,10 @@ android {
         }
     }
 }
+            repositories {
+                     mavenCentral()
+                     maven { url 'https://mapbox.bintray.com/mapbox' }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -29,6 +33,10 @@ dependencies {
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.42.6'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.42.6'
+
+
 
 
 
