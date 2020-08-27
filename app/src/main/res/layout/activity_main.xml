@@ -14,11 +14,24 @@
         mapbox:layout_constraintBottom_toBottomOf="parent"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent"
         mapbox:mapbox_cameraTargetLat="36.16266"
         mapbox:mapbox_cameraTargetLng="-86.78160"
-        mapbox:mapbox_cameraZoom="12"
+        mapbox:mapbox_cameraZoom="12" />
 
-        />
+    <Button
+        android:id="@+id/Getlatlang"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="650dp"
+        android:elevation="50dp"
+        android:text="@string/get_weather"
+        android:textSize="18sp"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/mapView"
+        mapbox:layout_constraintTop_toTopOf="@+id/mapView"
+        tools:layout_editor_absoluteX="0dp" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
