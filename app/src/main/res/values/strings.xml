@@ -6,6 +6,7 @@
     <string name="new_location">New lat: %1$s New longitude: %2$s</string>
     <string name="tapped_location">New lat: %1$s New longitude: %2$s</string>
     <string name="get_weather">Get Weather</string>
+    <string name="openweather_token">df7988b5831e56f5c8d05c9b2fc04df3</string>
 
 
 </resources>

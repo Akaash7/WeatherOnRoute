@@ -2,6 +2,8 @@ package com.akash.weatheronroute2;
 
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private MapView mapView;
-    private MapboxMap mapboxMap ;
+    private MapboxMap mapboxMap;
     private static final String SOURCE_ID = "SOURCE_ID";
     private static final String ICON_ID = "ICON_ID";
     private static final String LAYER_ID = "LAYER_ID";
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocation(style);
                 addDestinationIconSymbolLayer(style);
+                addWeatherSigns(style);
                 mapboxMap.addOnMapClickListener(MainActivity.this);
 
 
@@ -208,7 +212,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         );
         loadedMapStyle.addLayer(destinationSymbolLayer);
     }
+    private void addWeatherSigns(@NonNull Style loadedMapStyle) {
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_002_rain, null);
+        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
 
+        loadedMapStyle.addImage("rain-icon-id", mBitmap);
+
+        GeoJsonSource geoJsonSource = new GeoJsonSource("rain-source-id");
+        loadedMapStyle.addSource(geoJsonSource);
+        SymbolLayer destinationSymbolLayer = new SymbolLayer("rain-symbol-layer-id", "rain-source-id");
+        destinationSymbolLayer.withProperties(
+                iconImage("rain-icon-id"),
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true)
+        );
+        loadedMapStyle.addLayer(destinationSymbolLayer);
+    }
+    private void setIcons(String sourceid,double lat, double longi) {
+        List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+        symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                Point.fromLngLat(longi, lat)));
+            int i = 0;
+            i++;
+        GeoJsonSource source = mapboxMap.getStyle().getSourceAs(sourceid);
+        if (source != null) {
+
+            source.setGeoJson(FeatureCollection.fromFeatures(symbolLayerIconFeatureList));
+            System.out.println("sourceid"+i);
+
+        }
+    }
     private void getRoute(Point origin, Point destination) {
         NavigationRoute.builder(this)
                 .accessToken(getString(R.string.mapbox_access_token))
@@ -234,7 +267,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-                        click = (Button) findViewById(R.id.Getlatlang);
 
 
 
@@ -244,13 +276,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
-                        System.out.println("runnni");
 
+                        //get weather button
+                        click = (Button) findViewById(R.id.Getlatlang);
                         click.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 JSFetcher jsFetcher = new JSFetcher();
-                                try{  jsFetcher.execute(Jsonraw).get();
+                                weatherFetcher weatherFetchers = new weatherFetcher();
+                                try{
+                                    jsFetcher.execute(Jsonraw).get();
+                                    weatherFetchers.execute(jsFetcher.longs,jsFetcher.lats,jsFetcher.flaggedDuration).get();
                                 }
                                 catch (InterruptedException e){
                                     e.printStackTrace();
@@ -258,15 +294,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 catch (ExecutionException e){
                                     e.printStackTrace();
                                 }
-                                System.out.println("out loop");
-                                for(int i = 0 ; i<jsFetcher.locationlist.size()-1;i++)
-                                    System.out.println("in loop");
-                                GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-                                if (source != null) { System.out.println("runnning");
 
+
+
+
+                                for(int i = 0 ;i<jsFetcher.lats.size();i++){
+                                    //String idtostring = returnSourceID.getWeatherIconResId((weatherFetchers.weatherData.get(i).weatherCode));
+                                    setIcons("rain-source-id",
+                                            weatherFetchers.weatherData.get(i).lat,
+                                            weatherFetchers.weatherData.get(i).longi);
+
+                                    System.out.println(i+"tf");
+
+
+                                }
+
+                               /*for(int i = 0 ; i<jsFetcher.locationlist.size()-1;i++);
+                                GeoJsonSource source = mapboxMap.getStyle().getSourceAs("rain-source-id");
+                                if (source != null) {
 
                                     source.setGeoJson(FeatureCollection.fromFeatures(jsFetcher.locationlist));
-                                }
+                                }*/
+
 
 
                             }
@@ -284,6 +333,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+
+
+
     @SuppressWarnings("MissingPermission")
     private void enableLocation(@NonNull Style loadedMapStyle) {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
@@ -373,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
 
     }
+
 
     @Override
     public void onPermissionResult(boolean granted) {
